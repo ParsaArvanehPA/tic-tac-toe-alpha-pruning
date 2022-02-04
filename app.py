@@ -1,26 +1,35 @@
+from operator import le
 import time
 
 class Game:
     def __init__(self):
+        self.is_game_over = False
         self.initialize_game()
 
     def initialize_game(self):
-        self.current_state = [['.','.','.'],
-                              ['.','.','.'],
-                              ['.','.','.']]
+        self.board_cell_n = int(input('Board is n*n. Please enter n: '))
+        self.current_state = []
+        for i in range(0, self.board_cell_n):
+            newRow = []
+            for j in range(0, self.board_cell_n):
+                newRow.append('.')
+            self.current_state.append(newRow)
+        # self.current_state = [['.','.','.'],
+        #                       ['.','.','.'],
+        #                       ['.','.','.']]
 
         # نوبت اولین بازیکن
         self.player_turn = 'X'
 
     def draw_board(self):
-        for i in range(0, 3):
-            for j in range(0, 3):
+        for i in range(0, self.board_cell_n):
+            for j in range(0, self.board_cell_n):
                 print('{}|'.format(self.current_state[i][j]), end=" ")
             print()
         print()
 
     def is_valid(self, px, py):
-        if px < 0 or px > 2 or py < 0 or py > 2:
+        if px < 0 or px > self.board_cell_n - 1 or py < 0 or py > self.board_cell_n - 1:
             return False
         elif self.current_state[px][py] != '.':
             return False
@@ -29,34 +38,50 @@ class Game:
 
     def is_end(self):
         # Vertical win
-        for i in range(0, 3):
-            if (self.current_state[0][i] != '.' and
-                self.current_state[0][i] == self.current_state[1][i] and
-                self.current_state[1][i] == self.current_state[2][i]):
-                return self.current_state[0][i]
+        for i in range(0, self.board_cell_n):
+            column = []
+            for j in range(0, self.board_cell_n):
+                column.append(self.current_state[j][i])
+            column = list(dict.fromkeys(column))
+            if len(column) == 1 and column[0] != '.': return column[0]
 
         # Horizontal win
-        for i in range(0, 3):
-            if (self.current_state[i] == ['X', 'X', 'X']):
+        for i in range(0, self.board_cell_n):
+            row_x = []
+            row_o = []
+            for j in range(0, self.board_cell_n): row_x.append('X')
+            for j in range(0, self.board_cell_n): row_o.append('O')
+            if (self.current_state[i] == row_x):
                 return 'X'
-            elif (self.current_state[i] == ['O', 'O', 'O']):
+            elif (self.current_state[i] == row_o):
                 return 'O'
 
         # Main diagonal win
-        if (self.current_state[0][0] != '.' and
-            self.current_state[0][0] == self.current_state[1][1] and
-            self.current_state[0][0] == self.current_state[2][2]):
-            return self.current_state[0][0]
+        diagonal_left_to_right = []
+        for i in range(0, self.board_cell_n):
+            diagonal_left_to_right.append(self.current_state[i][i])
+        diagonal_left_to_right = list(dict.fromkeys(diagonal_left_to_right))
+        if len(diagonal_left_to_right) == 1 and diagonal_left_to_right[0] != '.': return diagonal_left_to_right[0]
+
+        # if (self.current_state[0][0] != '.' and
+        #     self.current_state[0][0] == self.current_state[1][1] and
+        #     self.current_state[0][0] == self.current_state[2][2]):
+        #     return self.current_state[0][0]
 
         # Second diagonal win
-        if (self.current_state[0][2] != '.' and
-            self.current_state[0][2] == self.current_state[1][1] and
-            self.current_state[0][2] == self.current_state[2][0]):
-            return self.current_state[0][2]
+        diagonal_right_to_left = []
+        for i in range(0, self.board_cell_n):
+            diagonal_right_to_left.append(self.current_state[i][self.board_cell_n - (i + 1)])
+        diagonal_right_to_left = list(dict.fromkeys(diagonal_right_to_left))
+        if len(diagonal_right_to_left) == 1 and diagonal_right_to_left[0] != '.': return diagonal_right_to_left[0]
+        # if (self.current_state[0][2] != '.' and
+        #     self.current_state[0][2] == self.current_state[1][1] and
+        #     self.current_state[0][2] == self.current_state[2][0]):
+        #     return self.current_state[0][2]
 
         # Is whole board full?
-        for i in range(0, 3):
-            for j in range(0, 3):
+        for i in range(0, self.board_cell_n):
+            for j in range(0, self.board_cell_n):
                 # There's an empty field, we continue the game
                 if (self.current_state[i][j] == '.'):
                     return None
@@ -78,8 +103,8 @@ class Game:
         elif result == '.':
             return (0, 0, 0)
 
-        for i in range(0, 3):
-            for j in range(0, 3):
+        for i in range(0, self.board_cell_n):
+            for j in range(0, self.board_cell_n):
                 if self.current_state[i][j] == '.':
                     self.current_state[i][j] = 'O'
                     (m, min_i, in_j) = self.min_alpha_beta(alpha, beta)
@@ -113,8 +138,8 @@ class Game:
         elif result == '.':
             return (0, 0, 0)
 
-        for i in range(0, 3):
-            for j in range(0, 3):
+        for i in range(0, self.board_cell_n):
+            for j in range(0, self.board_cell_n):
                 if self.current_state[i][j] == '.':
                     self.current_state[i][j] = 'X'
                     (m, max_i, max_j) = self.max_alpha_beta(alpha, beta)
@@ -149,7 +174,8 @@ class Game:
                     print("It's a tie!")
 
 
-                self.initialize_game()
+                # self.initialize_game()
+                self.draw_board()
                 return
 
             if self.player_turn == 'X':
