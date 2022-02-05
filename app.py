@@ -14,9 +14,6 @@ class Game:
             for j in range(0, self.board_cell_n):
                 newRow.append('.')
             self.current_state.append(newRow)
-        # self.current_state = [['.','.','.'],
-        #                       ['.','.','.'],
-        #                       ['.','.','.']]
 
         # نوبت اولین بازیکن
         self.player_turn = 'X'
@@ -63,21 +60,13 @@ class Game:
         diagonal_left_to_right = list(dict.fromkeys(diagonal_left_to_right))
         if len(diagonal_left_to_right) == 1 and diagonal_left_to_right[0] != '.': return diagonal_left_to_right[0]
 
-        # if (self.current_state[0][0] != '.' and
-        #     self.current_state[0][0] == self.current_state[1][1] and
-        #     self.current_state[0][0] == self.current_state[2][2]):
-        #     return self.current_state[0][0]
-
         # Second diagonal win
         diagonal_right_to_left = []
         for i in range(0, self.board_cell_n):
             diagonal_right_to_left.append(self.current_state[i][self.board_cell_n - (i + 1)])
         diagonal_right_to_left = list(dict.fromkeys(diagonal_right_to_left))
         if len(diagonal_right_to_left) == 1 and diagonal_right_to_left[0] != '.': return diagonal_right_to_left[0]
-        # if (self.current_state[0][2] != '.' and
-        #     self.current_state[0][2] == self.current_state[1][1] and
-        #     self.current_state[0][2] == self.current_state[2][0]):
-        #     return self.current_state[0][2]
+
 
         # Is whole board full?
         for i in range(0, self.board_cell_n):
@@ -90,7 +79,7 @@ class Game:
         return '.'
 
     def max_alpha_beta(self, alpha, beta):
-        maxv = -2
+        maxv = -3
         px = None
         py = None
 
@@ -124,7 +113,7 @@ class Game:
         return (maxv, px, py)
 
     def min_alpha_beta(self, alpha, beta):
-        minv = 2
+        minv = 3
 
         qx = None
         qy = None
@@ -159,7 +148,7 @@ class Game:
 
     def play(self):
         # برای اینکه فقط هوش مصنوعی دربرابر هوش مصنوعی بازی کند این بولین رو تغییر دهید
-        is_both_ai = False
+        is_both_ai = True
 
         while True:
             self.draw_board()
@@ -182,7 +171,7 @@ class Game:
 
                 while True:
                     start = time.time()
-                    (m, qx, qy) = self.min_alpha_beta(-2, 2)
+                    (m, qx, qy) = self.min_alpha_beta(-3, 3)
                     end = time.time()
                     print('Evaluation time: {}s'.format(round(end - start, 7)))
 
@@ -205,7 +194,7 @@ class Game:
                         print('The move is not valid! Try again.')
 
             else:
-                (m, px, py) = self.max_alpha_beta(-2, 2)
+                (m, px, py) = self.max_alpha_beta(-3, 3)
                 self.current_state[px][py] = 'O'
                 self.player_turn = 'X'
 
