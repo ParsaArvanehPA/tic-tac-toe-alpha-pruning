@@ -68,10 +68,9 @@ class Game:
         if len(diagonal_right_to_left) == 1 and diagonal_right_to_left[0] != '.': return diagonal_right_to_left[0]
 
 
-        # Is whole board full?
+        # چک میکنه جای خالی هست رو برد یا ن
         for i in range(0, self.board_cell_n):
             for j in range(0, self.board_cell_n):
-                # There's an empty field, we continue the game
                 if (self.current_state[i][j] == '.'):
                     return None
 
